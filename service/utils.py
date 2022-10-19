@@ -2,7 +2,7 @@ import numpy as np
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
-import onnxruntime as onnxruntime
+import onnxruntime
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
