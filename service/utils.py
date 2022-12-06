@@ -1,20 +1,20 @@
-import numpy as np
+import torch
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-
-import onnxruntime
+from model import ModelV2
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
-def model(array):
-    scaled = (np.array(array) / 255).astype(np.float32)
-    inp = scaled.reshape(1, 28, 28)
-    session = onnxruntime.InferenceSession('model.onnx', None)
-    input_name = session.get_inputs()[0].name
-    output_name = session.get_outputs()[0].name
+def predict(array):
+    scaled = torch.tensor(array) / 255
+    inp = scaled.reshape(1, 28, 28).unsqueeze(0)
 
-    result, = session.run([output_name], {input_name: inp})
+    model = ModelV2(1, 10)
+    model.load_state_dict(torch.load('model.pth'))
+    model.eval()
+    with torch.inference_mode():
+        result = model(inp)
     predicted = result[0].argmax(0)
     return int(predicted)

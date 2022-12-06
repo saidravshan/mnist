@@ -2,7 +2,7 @@ from fastapi import Body
 from fastapi.responses import HTMLResponse
 
 from type import Image
-from utils import model, app
+from utils import predict, app
 
 
 @app.get('/', response_class=HTMLResponse)
@@ -11,5 +11,5 @@ async def index():
 
 
 @app.post('/predict')
-async def predict(body: Image = Body()):
-    return {"prediction": model(body.data)}
+async def prediction(body: Image = Body()):
+    return {"prediction": predict(body.data)}
